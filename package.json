@@ -1,0 +1,44 @@
+{
+  "name": "promptshare",
+  "version": "1.0.0",
+  "description": "Share AI prompts by link, with expiry and an admin dashboard",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "concurrently \"npm run css:watch\" \"node --watch server.js\"",
+    "build": "npm ci && npm run migrate && npm run css:build",
+    "migrate": "knex migrate:latest --knexfile ./knexfile.js",
+    "db:reset": "node -e \"require('fs').rmSync(process.env.DB_PATH || 'data/db.sqlite', {force:true})\" && npm run migrate",
+    "css:build": "tailwindcss -i src/app.css -o public/css/app.css --minify",
+    "css:watch": "tailwindcss -i src/app.css -o public/css/app.css --watch",
+    "test": "npm run css:build && node --test \"test/**/*.test.js\"",
+    "test:unit": "node --test \"test/unit/**/*.test.js\"",
+    "test:integration": "node --test \"test/integration/**/*.test.js\"",
+    "test:e2e": "npm run css:build && node --test \"test/e2e/**/*.test.js\""
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "csrf-csrf": "^4.0.3",
+    "dotenv": "^18.0.6",
+    "ejs": "^7.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0",
+    "knex": "^3.3.0",
+    "morgan": "^1.12.1",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/space-grotesk": "^5.3.0",
+    "concurrently": "^10.0.5",
+    "playwright": "^1.64.0",
+    "supertest": "^7.3.1",
+    "tailwindcss": "^3.4.19"
+  },
+  "overrides": {
+    "shell-quote": "^1.12.0",
+    "postcss-selector-parser": "^7.1.6"
+  }
+}

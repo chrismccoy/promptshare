@@ -1,0 +1,121 @@
+<%- include('partials/_layout_start', { title: 'Prompts' }) %>
+<%
+  const BADGE = { active: 'dash-badge-active', soon: 'dash-badge-soon', expired: 'dash-badge-expired', never: 'dash-badge-never' };
+  const filtered = filters.q || filters.status !== 'all' || filters.source !== 'all';
+  const STAT_CARDS = [
+    ['Total', 'total', 'stat-total'],
+    ['Created today', 'today', 'stat-today'],
+    ['Expiring in 24h', 'expiringSoon', 'stat-soon'],
+    ['Expired', 'expired', 'stat-expired'],
+  ];
+  const STATUS_TABS = [
+    ['all', 'All', 'rounded-l-md'],
+    ['active', 'Active', '-ml-px'],
+    ['expired', 'Expired', '-ml-px rounded-r-md'],
+  ];
+%>
+
+<section class="grid grid-cols-2 gap-4 lg:grid-cols-4" aria-label="Stats">
+  <% STAT_CARDS.forEach(([label, key, id]) => { %>
+    <div class="dash-card p-4">
+      <p class="text-sm text-slate-500"><%= label %></p>
+      <p class="mt-1 text-2xl font-semibold tabular-nums" id="<%= id %>"><%= stats[key].toLocaleString('en-US') %></p>
+    </div>
+  <% }) %>
+</section>
+
+<form id="filters" method="get" action="/admin" class="mt-6 flex flex-wrap items-center gap-3" role="search">
+  <input type="search" name="q" value="<%= filters.q %>" placeholder="Search key or content…" class="dash-input w-full sm:w-72" aria-label="Search prompts" />
+  <div class="inline-flex shadow-sm" role="radiogroup" aria-label="Status">
+    <% STATUS_TABS.forEach(([value, label, shape]) => { %>
+      <label class="cursor-pointer">
+        <input type="radio" name="status" value="<%= value %>" class="peer sr-only" <%= filters.status === value ? 'checked' : '' %> />
+        <span class="block border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 peer-checked:z-10 peer-checked:border-indigo-300 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500 <%= shape %>"><%= label %></span>
+      </label>
+    <% }) %>
+  </div>
+  <select name="source" class="dash-input w-auto" aria-label="Source">
+    <option value="all" <%= filters.source === 'all' ? 'selected' : '' %>>All sources</option>
+    <option value="public" <%= filters.source === 'public' ? 'selected' : '' %>>Public</option>
+    <option value="admin" <%= filters.source === 'admin' ? 'selected' : '' %>>Admin</option>
+  </select>
+  <button type="submit" class="dash-btn">Apply</button>
+  <p class="text-sm text-slate-500"><span id="total-count"><%= total.toLocaleString('en-US') %></span> prompts</p>
+  <button type="button" id="bulk-delete" class="group dash-btn-danger ml-auto hidden data-[state=confirm]:bg-red-700" data-state="idle">
+    <span class="group-data-[state=confirm]:hidden group-data-[state=busy]:hidden group-data-[state=error]:hidden">Delete selected (<span id="bulk-count">0</span>)</span>
+    <span class="hidden group-data-[state=confirm]:inline">Confirm delete?</span>
+    <span class="hidden group-data-[state=busy]:inline">Deleting…</span>
+    <span class="hidden group-data-[state=error]:inline">Failed, retry</span>
+  </button>
+</form>
+
+<div id="table-wrap" class="mt-4" data-reload-url="<%= pageUrl(page) %>">
+  <% if (prompts.length === 0) { %>
+    <%- include('partials/_empty_state', { filtered }) %>
+  <% } else { %>
+    <div class="dash-card overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="dash-th w-10"><input type="checkbox" id="select-all" class="rounded border-slate-300" aria-label="Select all on this page" /></th>
+            <th class="dash-th">Key</th>
+            <th class="dash-th">Preview</th>
+            <th class="dash-th">Size</th>
+            <th class="dash-th">Expiry</th>
+            <th class="dash-th">Source</th>
+            <th class="dash-th">Created</th>
+            <th class="dash-th text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="prompt-rows" class="divide-y divide-slate-100 bg-white">
+          <% prompts.forEach((p) => { %>
+            <tr data-row-id="<%= p.id %>"<% if (p.created_at >= startOfToday) { %> data-today="1"<% } %> class="transition-opacity duration-200 hover:bg-slate-50">
+              <td class="dash-td"><input type="checkbox" class="row-check rounded border-slate-300" value="<%= p.id %>" aria-label="Select <%= p.key %>" /></td>
+              <td class="dash-td font-mono">
+                <% if (p.status === 'expired') { %><span class="font-mono"><%= p.key %></span><% } else { %><a href="/p/<%= p.key %>" target="_blank" rel="noopener" class="text-indigo-600 hover:underline"><%= p.key %></a><% } %>
+              </td>
+              <td class="dash-td max-w-xs truncate text-slate-500" title="<%= p.preview %>"><%= p.preview %></td>
+              <td class="dash-td tabular-nums"><%= p.sizeText %></td>
+              <td class="dash-td"><span class="dash-badge <%= BADGE[p.status] %>" data-status="<%= p.status %>"><%= p.status === 'never' ? 'Never' : p.ttlText %></span></td>
+              <td class="dash-td"><span class="dash-badge <%= p.source === 'admin' ? 'dash-badge-admin' : 'dash-badge-never' %>"><%= p.source === 'admin' ? 'Admin' : 'Public' %></span></td>
+              <td class="dash-td text-slate-500"><%= p.createdAtText %></td>
+              <td class="dash-td">
+                <div class="flex justify-end gap-1">
+                  <% if (p.status !== 'expired') { %>
+                    <a href="/p/<%= p.key %>" target="_blank" rel="noopener" class="dash-link">Open</a>
+                    <a href="/p/<%= p.key %>.md" target="_blank" rel="noopener" class="dash-link">Raw</a>
+                  <% } %>
+                  <a href="/admin/prompts/<%= p.id %>/edit" class="dash-link">Edit</a>
+                  <button type="button" class="peer group delete-btn dash-link text-red-600 hover:bg-red-50 data-[state=confirm]:bg-red-600 data-[state=confirm]:text-white disabled:opacity-50" data-id="<%= p.id %>" data-state="idle">
+                    <span class="group-data-[state=confirm]:hidden group-data-[state=busy]:hidden group-data-[state=error]:hidden">Delete</span>
+                    <span class="hidden group-data-[state=confirm]:inline">Confirm?</span>
+                    <span class="hidden group-data-[state=busy]:inline">Deleting…</span>
+                    <span class="hidden group-data-[state=error]:inline">Failed, retry</span>
+                  </button>
+                  <button type="button" class="cancel-btn dash-link hidden peer-data-[state=confirm]:inline-flex peer-data-[state=error]:inline-flex">Cancel</button>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if (totalPages > 1) { %>
+      <nav class="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600" aria-label="Pagination">
+        <p>Showing <%= (page - 1) * perPage + 1 %>–<%= Math.min(page * perPage, total) %> of <%= total.toLocaleString('en-US') %></p>
+        <div class="flex items-center gap-2">
+          <% if (page > 1) { %><a class="dash-btn" href="<%= pageUrl(page - 1) %>" rel="prev">‹ Prev</a><% } %>
+          <span class="px-2">Page <%= page %> of <%= totalPages %></span>
+          <% if (page < totalPages) { %><a class="dash-btn" href="<%= pageUrl(page + 1) %>" rel="next">Next ›</a><% } %>
+        </div>
+      </nav>
+    <% } %>
+  <% } %>
+</div>
+
+<template id="empty-state-tpl">
+  <%- include('partials/_empty_state', { filtered }) %>
+</template>
+
+<%- include('partials/_layout_end', { scripts: ['/js/admin.js'] }) %>

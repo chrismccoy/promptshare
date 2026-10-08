@@ -1,0 +1,9 @@
+<%- include('partials/_layout_start', { title: 'Edit prompt' }) %>
+<nav class="mb-4 flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="Breadcrumb">
+  <a href="/admin" class="hover:text-slate-900">Prompts</a> / <span class="font-mono"><%= prompt.key %></span> / Edit
+  <% if (prompt.status !== 'expired') { %>
+    <a href="/p/<%= prompt.key %>" target="_blank" rel="noopener" class="dash-link ml-auto">View Prompt</a>
+  <% } %>
+</nav>
+<%- include('partials/_prompt_form', { action: `/admin/prompts/${prompt.id}`, submitLabel: 'Save changes' }) %>
+<%- include('partials/_layout_end', { scripts: ['/js/admin-form.js'] }) %>

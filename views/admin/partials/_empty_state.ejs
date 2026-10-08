@@ -1,0 +1,9 @@
+<div class="dash-card px-6 py-12 text-center">
+  <% if (filtered) { %>
+    <p class="text-sm font-medium">No results<%= filters.q ? ` for “${filters.q}”` : '' %></p>
+    <a href="/admin" class="dash-btn mt-4">Clear filters</a>
+  <% } else { %>
+    <p class="text-sm font-medium">No prompts yet</p>
+    <a href="/admin/prompts/new" class="dash-btn-primary mt-4">+ New prompt</a>
+  <% } %>
+</div>

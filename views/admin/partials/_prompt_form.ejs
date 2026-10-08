@@ -1,0 +1,66 @@
+<%
+  const LABELS = {
+    keep: prompt ? `Keep current (${prompt.status === 'never' ? 'never' : prompt.ttlText})` : 'Keep current',
+    '1d': '1 day',
+    '7d': '7 days',
+    '30d': '30 days',
+    '1y': '1 year',
+    never: 'Never expires',
+    now: 'Expire now',
+  };
+%>
+<form method="post" action="<%= action %>" id="prompt-form" class="grid gap-6 lg:grid-cols-3" data-max-bytes="<%= maxBytes %>" data-max-mb="<%= maxMb %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+  <div class="dash-card p-4 lg:col-span-2">
+    <div class="flex items-center justify-between gap-3">
+      <label for="content" class="text-sm font-medium text-slate-700">Content</label>
+      <label class="dash-btn cursor-pointer">
+        Load file
+        <input type="file" id="file" accept=".txt,.md,text/plain,text/markdown" class="sr-only" />
+      </label>
+    </div>
+    <% if (error) { %>
+      <p id="form-error" class="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700" role="alert"><%= error %></p>
+    <% } %>
+    <textarea id="content" name="content" rows="18" class="dash-input mt-3 resize-y font-mono text-[13px] leading-6"><%= values.content %></textarea>
+    <p id="counter" class="mt-2 text-xs tabular-nums text-slate-500"></p>
+  </div>
+
+  <div class="space-y-6">
+    <% if (prompt) { %>
+      <dl class="dash-card divide-y divide-slate-100 text-sm">
+        <% [
+          ['Key', prompt.key],
+          ['Created', prompt.createdAtText],
+          ['Edited', prompt.editedAtText],
+          ['Size', prompt.sizeText],
+          ['Source', prompt.source === 'admin' ? 'Admin' : 'Public'],
+          ['Status', prompt.status === 'never' ? 'Never expires' : prompt.ttlText],
+        ].forEach(([term, value]) => { %>
+          <div class="flex justify-between gap-3 px-4 py-2.5">
+            <dt class="text-slate-500"><%= term %></dt>
+            <dd class="font-medium text-slate-900"><%= value %></dd>
+          </div>
+        <% }) %>
+      </dl>
+    <% } %>
+
+    <div class="dash-card p-4" role="radiogroup" aria-labelledby="expiry-label">
+      <p id="expiry-label" class="text-sm font-medium text-slate-700">Expiry</p>
+      <div class="mt-3 space-y-2">
+        <% choices.forEach((choice) => { %>
+          <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+            <input type="radio" name="expiry" value="<%= choice %>" class="border-slate-300 text-indigo-600 focus:ring-indigo-500" <%= values.expiry === choice ? 'checked' : '' %> />
+            <span class="<%= choice === 'now' ? 'text-red-600' : '' %>"><%= LABELS[choice] %></span>
+          </label>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-2 border-t border-slate-200 pt-4 lg:col-span-3">
+    <a href="/admin" class="dash-btn">Cancel</a>
+    <button type="submit" class="dash-btn-primary"><%= submitLabel %></button>
+  </div>
+</form>

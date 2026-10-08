@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2");
+}
+
+@layer components {
+  .iso-card {
+    border: 2px solid theme("colors.ink");
+    box-shadow:
+      1px 1px 0 theme("colors.ink"),
+      2px 2px 0 theme("colors.ink"),
+      3px 3px 0 theme("colors.ink"),
+      4px 4px 0 theme("colors.ink"),
+      5px 5px 0 theme("colors.ink"),
+      6px 6px 0 theme("colors.ink");
+  }
+  .iso-btn {
+    border: 2px solid theme("colors.ink");
+    box-shadow: 4px 4px 0 theme("colors.ink");
+    transition: all 0.15s ease;
+  }
+  .iso-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 theme("colors.ink");
+  }
+  .iso-btn:disabled {
+    box-shadow: 4px 4px 0 #a8adb8;
+    border-color: #a8adb8;
+  }
+  .tab-pill {
+    transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.44, 1);
+  }
+  .iso-block {
+    transform: rotateX(55deg) rotateZ(45deg);
+    box-shadow: 6px 6px 0 theme("colors.ink");
+  }
+  .dropzone-dragging {
+    background: #fff7cc;
+    transform: translate(-2px, -2px);
+  }
+  .prompt-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+  .prompt-scroll::-webkit-scrollbar-thumb {
+    background: theme("colors.ink");
+    border-radius: 99px;
+  }
+}
+
+@layer components {
+  .dash-card {
+    @apply rounded-lg border border-slate-200 bg-white shadow-sm;
+  }
+  .dash-btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:opacity-50;
+  }
+  .dash-btn-primary {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:opacity-50;
+  }
+  .dash-btn-danger {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:opacity-50;
+  }
+  .dash-link {
+    @apply inline-flex items-center rounded px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+  }
+  .dash-input {
+    @apply block w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500;
+  }
+  .dash-th {
+    @apply px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-slate-500;
+  }
+  .dash-td {
+    @apply whitespace-nowrap px-4 py-3 text-sm text-slate-700;
+  }
+  .dash-badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset;
+  }
+  .dash-badge-active {
+    @apply bg-emerald-50 text-emerald-700 ring-emerald-600/20;
+  }
+  .dash-badge-soon {
+    @apply bg-amber-50 text-amber-700 ring-amber-600/20;
+  }
+  .dash-badge-expired {
+    @apply bg-red-50 text-red-700 ring-red-600/20;
+  }
+  .dash-badge-never {
+    @apply bg-slate-100 text-slate-600 ring-slate-500/20;
+  }
+  .dash-badge-admin {
+    @apply bg-indigo-50 text-indigo-700 ring-indigo-600/20;
+  }
+}

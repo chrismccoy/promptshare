@@ -1,0 +1,7 @@
+#tabs,
+#pane-upload {
+  display: none !important;
+}
+#pane-paste {
+  display: block !important;
+}

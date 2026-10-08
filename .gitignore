@@ -1,0 +1,7 @@
+node_modules/
+.env
+data/*.sqlite*
+public/css/app.css
+test/e2e/artifacts/
+*.swp
+*.swo

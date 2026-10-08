@@ -1,0 +1,9 @@
+<% if (locals.flash) { %>
+  <div class="dash-card mb-6 flex flex-wrap items-center gap-3 border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="status" id="flash">
+    <span class="font-medium"><%= flash.message %></span>
+    <% if (flash.url) { %>
+      <code class="min-w-0 truncate font-mono text-xs" id="flash-url"><%= flash.url %></code>
+      <button type="button" class="dash-btn ml-auto" data-copy="<%= flash.url %>">Copy link</button>
+    <% } %>
+  </div>
+<% } %>

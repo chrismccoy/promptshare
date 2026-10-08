@@ -1,0 +1,18 @@
+<aside class="border-b border-slate-200 bg-white md:w-60 md:shrink-0 md:border-b-0 md:border-r">
+  <div class="flex flex-wrap items-center gap-3 px-4 py-3 md:flex-nowrap md:sticky md:top-0 md:h-screen md:flex-col md:items-stretch md:gap-6 md:py-6">
+    <a href="/admin" class="flex items-center gap-2 font-semibold">
+      <span class="flex h-8 w-8 items-center justify-center rounded-md bg-indigo-600 text-white">◧</span>
+      Prompt Share
+    </a>
+    <nav class="flex-1 md:flex-none" aria-label="Admin">
+      <a href="/admin" class="flex items-center gap-2 rounded-md bg-slate-100 px-3 py-2 text-sm font-medium text-slate-900">▣ Prompts</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-1 md:ml-0 md:mt-auto md:flex-col md:items-stretch">
+      <a href="/" target="_blank" rel="noopener" id="public-site-link" class="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900">↗ Public site</a>
+      <form method="post" action="/admin/logout">
+        <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>" />
+        <button type="submit" class="w-full rounded-md px-3 py-2 text-left text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900">Log out</button>
+      </form>
+    </div>
+  </div>
+</aside>

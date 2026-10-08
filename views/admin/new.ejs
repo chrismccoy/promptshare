@@ -1,0 +1,6 @@
+<%- include('partials/_layout_start', { title: 'New prompt' }) %>
+<nav class="mb-4 text-sm text-slate-500" aria-label="Breadcrumb">
+  <a href="/admin" class="hover:text-slate-900">Prompts</a> / New
+</nav>
+<%- include('partials/_prompt_form', { action: '/admin/prompts', prompt: null, submitLabel: 'Create prompt' }) %>
+<%- include('partials/_layout_end', { scripts: ['/js/admin-form.js'] }) %>
